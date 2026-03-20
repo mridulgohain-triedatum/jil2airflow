@@ -29,7 +29,7 @@ def show_summary_and_dag(jobs_dict):
         return pd.DataFrame(rows)
 
     summary_df = job_summary_table(jobs_dict)
-    st.dataframe(summary_df, width='stretch')
+    st.dataframe(summary_df, use_container_width=True)
 
     def show_interactive_dag(jobs_dict):
         BOX_COLORS = [

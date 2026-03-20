@@ -14,7 +14,6 @@ from typing import Dict
 from autosys_job import AutosysJob
 from  utils.external_dep_utils import ExternalDepUtils
 from utils.converter_utils import Utils
-from collections import defaultdict
 
 # ----------------------------------------
 # Session Init
@@ -40,7 +39,7 @@ def init_session():
         "dep_info": {},
         "handle_ext_ref": False,
         "downstream_jil_schedule": "",
-        "downstream_jil_tz": ""
+        "jobs_schedule_dict": {}
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -100,7 +99,7 @@ def get_prefixed_job_names(jobs: Dict[str, AutosysJob]) -> Dict[str, str]:
 with st.sidebar:
     st.header("Profile / Environment Variables")
     # Checkbox for substitution
-    substitute_in_command = st.checkbox("Substitute in command", value=st.session_state.get("substitute_in_command", False), key="substitute_in_command")
+    substitute_in_command = st.checkbox("Substitute in command", key="substitute_in_command")
     # Do NOT assign to st.session_state.substitute_in_command here
     if "env_vars" not in st.session_state:
         st.session_state.env_vars = {}
@@ -147,6 +146,7 @@ if st.session_state.step == 0:
             files = [files]
         parsed_files = {}
         ext_dep_dict = {}
+        jobs_schedule_dict = {}
         parser = None
         if st.session_state.mode == "single":
             parser = JILParser()
@@ -174,11 +174,22 @@ if st.session_state.step == 0:
                             job.command = substitute_env_vars(job.command, st.session_state.env_vars)
                         if hasattr(job, "watch_file") and job.watch_file:
                             job.watch_file = substitute_env_vars(job.watch_file, st.session_state.env_vars)
+                        if hasattr(job, "std_out_file") and job.std_out_file:
+                            job.std_out_file = substitute_env_vars(job.std_out_file, st.session_state.env_vars)
+                        if hasattr(job, "std_err_file") and job.std_err_file:
+                            job.std_err_file = substitute_env_vars(job.std_err_file, st.session_state.env_vars)    
                 if not jobs:
                     st.warning(f"⚠️ No jobs found in: {f.name}")
                     continue
                     
                 parsed_files[f.name] = jobs
+                #-----------------------------------------
+                # Checking if jil has multiple schedules
+                #-------------------------------------------
+                job_name_to_schedule_map = Utils.check_for_schedules(jobs)
+                if job_name_to_schedule_map:
+                    jobs_schedule_dict[f.name] = job_name_to_schedule_map
+                #-----------------End of job schedule check    
                 #------------------------------------------
                 # CHecking for external dependency
                 #------------------------------------------
@@ -197,6 +208,13 @@ if st.session_state.step == 0:
                 st.session_state.dep_info[st.session_state.jil_files_full_name[0]]="downstream"                                       
             else:
                 st.session_state.batch_jobs_dicts = parsed_files
+            #------------------- Redirection if multiple schedules are found in a jil -----------
+            if jobs_schedule_dict:
+                st.session_state.jobs_schedule_dict = jobs_schedule_dict
+                st.session_state.step = 50
+                st.rerun()  
+            #------------------- End -------------------------------------------------------
+            
             #------------------- Redirecting if external dependency found-------   
             if ext_dep_dict:
                 st.session_state.ext_dep_dict = ext_dep_dict
@@ -277,12 +295,11 @@ elif st.session_state.step == 1 and st.session_state.mode == "batch":
         #extracting fully qualified job name
         external_job_to_dependent_map = next(iter(st.session_state.ext_dep_dict.values()), {})
         external_task_to_dag_id_map = {}
-        dag_id_to_schedule_map = defaultdict(dict)
+        dag_id_to_schedule_map = {}
         for fname, jobs_dict in st.session_state.batch_jobs_dicts.items():
             dag_id = f"{fname.split('.')[0]}"
             schedule = Utils.determine_schedule_interval(jobs_dict)
-            dag_id_to_schedule_map[dag_id]["schedule"] = schedule
-            dag_id_to_schedule_map[dag_id]["timezone"] = Utils.get_timezone_for_dag(jobs_dict)
+            dag_id_to_schedule_map[dag_id] = schedule
             if st.session_state.handle_ext_ref:
                 full_job_names = get_prefixed_job_names(jobs_dict)
                 for job_name, job in jobs_dict.items():
@@ -296,12 +313,12 @@ elif st.session_state.step == 1 and st.session_state.mode == "batch":
             dag_id = f"{fname.split('.')[0]}"
             if st.session_state.handle_ext_ref:
                 dag_code = AirflowDAGGenerator(jobs_dict, [job for sublist in st.session_state.ext_dep_dict.values() for job in sublist],
-                                           st.session_state.dep_info.get(fname, None),
+                                           st.session_state.dep_info.get(fname, None), st.session_state.schedule,
                                            external_job_to_dependent_map, external_task_to_dag_id_map, dag_id_to_schedule_map, st.session_state.downstream_jil_schedule,
-                                           st.session_state.downstream_jil_tz, st.session_state.handle_ext_ref).generate_dag(dag_id, st.session_state.schedule)
+                                           st.session_state.handle_ext_ref).generate_dag(dag_id, st.session_state.schedule)
             else:
-                dag_code = AirflowDAGGenerator(jobs_dict, {}, None,
-                                           {}, {}, {}, st.session_state.downstream_jil_schedule, st.session_state.downstream_jil_tz, False).generate_dag(dag_id, st.session_state.schedule)
+                dag_code = AirflowDAGGenerator(jobs_dict, {}, None, st.session_state.schedule,
+                                           {}, {}, {}, st.session_state.downstream_jil_schedule, False).generate_dag(dag_id, st.session_state.schedule)
             st.session_state.batch_dags[fname] = {
                 "dag_id": dag_id,
                 "code": dag_code,
@@ -426,7 +443,7 @@ elif st.session_state.step == -1 and st.session_state.mode == "batch":
             'border-style': 'solid',
             'padding': '5px'
         }).apply(lambda x: ['background-color: #eef6ff' if i % 2 == 0 else '' for i in range(len(x))], axis=0)
-    st.dataframe(style_table(df), width='stretch')
+    st.dataframe(style_table(df), use_container_width=True)
     st.error("⚠️ Remove files having external dependency!")
     if st.button("🔄 Restart Wizard", key="step_minus1_restart"):
         env_vars = st.session_state.get("env_vars", {})
@@ -456,10 +473,9 @@ elif st.session_state.step == 9 and st.session_state.mode == "single":
             'border-style': 'solid',
             'padding': '5px'
         }).apply(lambda x: ['background-color: #eef6ff' if i % 2 == 0 else '' for i in range(len(x))], axis=0)
-    st.dataframe(style_table(df), width='stretch')
+    st.dataframe(style_table(df), use_container_width=True)
     #extract schedule of the downstream job
     st.session_state.downstream_jil_schedule = Utils.determine_schedule_interval(st.session_state.jobs_dict)
-    st.session_state.downstream_jil_tz = Utils.get_timezone_for_dag(st.session_state.jobs_dict)
 
     option = st.radio("Choose option to handle external dependency",
                       ["Separate - This will generate separate Dag for each uploaded JIL files",
@@ -503,6 +519,10 @@ elif st.session_state.step == 9 and st.session_state.mode == "single":
                             job.command = substitute_env_vars(job.command, st.session_state.env_vars)
                         if hasattr(job, "watch_file") and job.watch_file:
                             job.watch_file = substitute_env_vars(job.watch_file, st.session_state.env_vars)
+                        if hasattr(job, "std_out_file") and job.std_out_file:
+                            job.std_out_file = substitute_env_vars(job.std_out_file, st.session_state.env_vars)
+                        if hasattr(job, "std_err_file") and job.std_err_file:
+                            job.std_err_file = substitute_env_vars(job.std_err_file, st.session_state.env_vars)        
                 if not jobs:
                     st.warning(f"⚠️ No jobs found in: {f.name}")
                     continue
@@ -572,4 +592,41 @@ elif st.session_state.step == 9 and st.session_state.mode == "single":
                     del st.session_state[key]
                 st.session_state.env_vars = env_vars
                 st.session_state.env_vars_list = env_vars_list
-                st.rerun()            
+                st.rerun()
+elif st.session_state.step == 50:
+    import pandas as pd
+    st.header("⚠️ Multiple schedule or multiple timezone found!")
+    jobs_schedule_dict = st.session_state.jobs_schedule_dict
+    print(f"jobs_schedule_dict - {jobs_schedule_dict}")
+    rows = []
+    if jobs_schedule_dict:
+        for fname, job_to_schedule_dict in jobs_schedule_dict.items():
+            for job_name, schedule_list in job_to_schedule_dict.items():
+                rows.append({
+                    "File Name": fname,
+                    "Job name": job_name,
+                    "Schedule": jobs_schedule_dict.get(fname, {}).get(job_name, {}).get("schedule", "-"),
+                    "Timezone": jobs_schedule_dict.get(fname, {}).get(job_name, {}).get("timezone", "-")
+                })          
+    df = pd.DataFrame(rows)
+    # Apply zebra-striping style
+    def style_table(df):
+        return df.style.set_properties(**{
+            'background-color': '#f9f9f9',
+            'color': '#000',
+            'border-color': '#ddd',
+            'border-width': '1px',
+            'border-style': 'solid',
+            'padding': '5px'
+        }).apply(lambda x: ['background-color: #eef6ff' if i % 2 == 0 else '' for i in range(len(x))], axis=0)
+    st.dataframe(style_table(df), use_container_width=True)
+    st.error("⚠️ Airflow does not support multiple schedule/timezone!")
+    st.error("⚠️ Remove file/s having multiple schedule or multiple timezone!")
+    if st.button("🔄 Restart Wizard", key="step_50_restart"):
+        env_vars = st.session_state.get("env_vars", {})
+        env_vars_list = st.session_state.get("env_vars_list", [])
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
+        st.session_state.env_vars = env_vars
+        st.session_state.env_vars_list = env_vars_list
+        st.rerun()     

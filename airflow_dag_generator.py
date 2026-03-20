@@ -13,9 +13,9 @@ from utils.converter_utils import Utils
 class AirflowDAGGenerator:
     """Generates Airflow DAG from parsed Autosys jobs"""
     
-    def __init__(self, jobs: Dict[str, AutosysJob],  ext_dep_list: list, dep_seq_info: str,
+    def __init__(self, jobs: Dict[str, AutosysJob],  ext_dep_list: list, dep_seq_info: str, schedule: str,
                  external_task_to_dependent_task_map: Dict[str, str], external_task_to_dag_id_map: Dict[str, str], dag_id_to_schedule_map: Dict[str, str],
-                 downstream_jil_schedule: str, downstream_jil_tz: str,  handle_ext_ref=False):
+                 downstream_jil_schedule: str, handle_ext_ref=False):
         self.jobs = jobs
         self.box_hierarchy = Utils.build_box_hierarchy(self.jobs)
         self.status_failure = "failure"
@@ -23,10 +23,10 @@ class AirflowDAGGenerator:
         self.ext_dep_list = ext_dep_list
         self.dep_seq_info = dep_seq_info
         self.handle_ext_ref = handle_ext_ref
+        self.schedule = schedule
         self.external_task_to_dependent_task_map = external_task_to_dependent_task_map
         self.external_task_to_dag_id_map = external_task_to_dag_id_map
         self.downstream_jil_schedule = downstream_jil_schedule
-        self.downstream_jil_tz = downstream_jil_tz
         self.dag_id_to_schedule_map = dag_id_to_schedule_map
 
     def _generate_external_task_sensor_indicator(self) -> bool:
@@ -63,8 +63,7 @@ class AirflowDAGGenerator:
         dependencies = self._generate_dependencies()
         if self._generate_external_task_sensor_indicator():
             external_dependecies = ExternalDepUtils.generate_external_dependency_tasks(
-                self.external_task_to_dependent_task_map,self.external_task_to_dag_id_map, self.downstream_jil_schedule.strip("'"),
-                self.downstream_jil_tz, self.dag_id_to_schedule_map)
+                self.external_task_to_dependent_task_map,self.external_task_to_dag_id_map, self.downstream_jil_schedule.strip("'"), self.dag_id_to_schedule_map)
             dag_code = f"{imports}\n\n{dag_definition}\n\n{callbacks}\n\n{tasks}\n\n{external_dependecies}\n\n{dependencies}"
         else:
             dag_code = f"{imports}\n\n{dag_definition}\n\n{callbacks}\n\n{tasks}\n\n{dependencies}"
@@ -172,9 +171,22 @@ class AirflowDAGGenerator:
     def _generate_imports(self) -> str:
         """Generate import statements"""
         return "\n".join(sorted(self._get_required_imports()))
+    
+    def _get_timezone_for_dag(self) -> str:
+        timezone = None
+        for job in self.jobs.values():
+            if job.date_conditions == 1 and getattr(job, "timezone", None):
+                raw_tz = job.timezone
+                # Normalize using mapping
+                mapped_tz = TIMEZONE_MAP.get(raw_tz, raw_tz)
+                if timezone is None:
+                    timezone = mapped_tz
+                elif mapped_tz != timezone:
+                    raise ValueError("JIL file contains jobs having different timezone schedules")
+        return timezone
 
     def _generate_dag_definition(self, dag_id: str, schedule_interval: str) -> str:
-        timezoneinfo = Utils.get_timezone_for_dag(self.jobs)
+        timezoneinfo = self._get_timezone_for_dag()
         if timezoneinfo:
             start_date_line = f"pendulum.datetime(2024, 1, 1, tz=\"{timezoneinfo}\")"
         else:
@@ -641,9 +653,15 @@ class AirflowDAGGenerator:
         resolved_cmd = job.command
         # Append stdout/stderr redirection if present
         if getattr(job, "std_out_file", None):
-            resolved_cmd += f" > {job.std_out_file}"
+            if job.std_out_file.startswith(">"):
+                resolved_cmd += f" {job.std_out_file}"
+            else:
+                resolved_cmd += f" > {job.std_out_file}"
         if getattr(job, "std_err_file", None):
-            resolved_cmd += f" 2> {job.std_err_file}"
+            if job.std_err_file.startswith(">"):
+                resolved_cmd += f" 2{job.std_err_file}"
+            else:
+                resolved_cmd += f" 2> {job.std_err_file}"
         # Build environment variables
         env_vars = "{}"
         if job.envvars:

@@ -5,7 +5,6 @@ from collections import defaultdict
 from condition_parser import ConditionParser
 from croniter import croniter
 from datetime import datetime
-import pytz
 
 class ExternalDepUtils:
     @staticmethod
@@ -34,13 +33,13 @@ class ExternalDepUtils:
         return dict(external_to_jobs)
     @staticmethod    
     def generate_external_dependency_tasks(external_task_to_dependent_task_map: Dict[str, str], external_task_to_dag_id_map: Dict[str, str],
-                                           downstream_schedule: str, downstream_tz: str, dag_id_to_schedule_map: Dict[str, str] ) -> str:
+                                           downstream_schedule: str, dag_id_to_schedule_map: Dict[str, str] ) -> str:
         external_task_name_prefix = "wait_for_"       
         for ext_task, dag_id in external_task_to_dag_id_map.items():
             if dag_id is None:
                 raise ValueError(f"External dependency task '{ext_task}' not found in Airflow.")
         ext_task_defs = "\n\n".join(
-            ExternalDepUtils.generate_external_task_sensor(ext_task, dag_id, external_task_name_prefix, downstream_schedule, downstream_tz, dag_id_to_schedule_map[dag_id])
+            ExternalDepUtils.generate_external_task_sensor(ext_task, dag_id, external_task_name_prefix, downstream_schedule, dag_id_to_schedule_map[dag_id].strip("'"))
             for ext_task, dag_id in external_task_to_dag_id_map.items()
         )
         dependency_lines = [
@@ -54,31 +53,20 @@ class ExternalDepUtils:
     
     @staticmethod
     def generate_external_task_sensor(external_task_id: str, external_dag_id: str, external_task_name_prefix: str,
-                                      downstream_schedule:str, downstream_tz: str, external_dag_schedule:Dict[str, str], indent: int = 0) -> str:
+                                      downstream_schedule:str, external_dag_schedule:str, indent: int = 0) -> str:
         indent_str = " " * indent
         ext_task_id_without_prefix = external_task_id.split(".")[-1]
-        def cron_prev_run(cron_exp, tz_name, ref_time=None):
-            tz = pytz.timezone(tz_name)
-            ref = ref_time or datetime.now(tz)
-            itr = croniter(cron_exp, ref)
-            return itr.get_prev(datetime)
-
-        def diff_in_minutes(cron1, tz1, cron2, tz2):
-            t1 = cron_prev_run(cron1, tz1)
-            t2 = cron_prev_run(cron2, tz2)
-            # Convert both timestamps to UTC
-            t1_utc = t1.astimezone(pytz.utc)
-            t2_utc = t2.astimezone(pytz.utc)
-
-            diff = abs((t1_utc - t2_utc).total_seconds()) / 60
-            return int(diff)
-        exe_delta = diff_in_minutes(downstream_schedule, downstream_tz, external_dag_schedule["schedule"].strip("'"), external_dag_schedule["timezone"])
+        base_time = datetime.now()
+        next_external_dag = croniter(external_dag_schedule, base_time).get_next(datetime)
+        next_downstream_dag = croniter(downstream_schedule, base_time).get_next(datetime)
+        diff_seconds = (next_downstream_dag - next_external_dag).total_seconds()
+        exe_delta = int(diff_seconds / 60)    
         task_def = f"""
 {indent_str}{external_task_name_prefix}{ext_task_id_without_prefix} = ExternalTaskSensor(
 {indent_str}    task_id = '{external_task_name_prefix}{ext_task_id_without_prefix}',          
 {indent_str}    external_dag_id = '{external_dag_id}',         # DAG to wait for
 {indent_str}    external_task_id = '{external_task_id}',       # Task to wait for 
-{indent_str}    poke_interval = 1*60,                          # check every 5mins
+{indent_str}    poke_interval = 5*60,                          # check every 5mins
 {indent_str}    execution_delta = timedelta(minutes={exe_delta}),                               # difference between this dag and external dag schedule
 {indent_str}    timeout = 43200,                               # fail if not found in 12 hours
 {indent_str}    mode = 'reschedule',

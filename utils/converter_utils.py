@@ -1,32 +1,23 @@
 from typing import Dict, List
 from autosys_job import AutosysJob
-from utils.timezone_map import TIMEZONE_MAP
+from collections import defaultdict
 class Utils:
-    @staticmethod  
-    def get_iana_timezone(raw_tz: str) -> str:
-        timezone = None
-        # Check if Autosys created timezone
-        import configparser
-        config = configparser.ConfigParser()
-        config.read('autosys_tz_to_IANA_tz_map.cfg')
-        if config.has_section('TIMEZONES') and config.has_option('TIMEZONES', raw_tz):
-            raw_tz = config.get('TIMEZONES', raw_tz)
-                # Using IANA from mapping
-        iana_tz = TIMEZONE_MAP.get(raw_tz, raw_tz)        
-        return iana_tz
-    
-    @staticmethod
-    def get_timezone_for_dag(jobs: Dict[str, AutosysJob]) -> str:
-        timezone = None
-        for job in jobs.values():
-            if job.date_conditions == 1 and getattr(job, "timezone", None):
-                mapped_tz = job.timezone           
-                if timezone is None:
-                    timezone = mapped_tz
-                elif mapped_tz != timezone:
-                    raise ValueError("JIL file contains jobs having different timezone schedules")
-        return timezone    
 
+    @staticmethod
+    def check_for_schedules(jobs: Dict[str, AutosysJob])-> Dict:
+        jobname_to_schedule_map = defaultdict(dict)
+        for job in jobs.values():
+            schedule = job.run_calendar or job.start_times or job.start_mins
+            if job.run_calendar or job.start_times or job.start_mins:
+                jobname_to_schedule_map[job.name]["schedule"] = schedule
+                jobname_to_schedule_map[job.name]["timezone"] = (job.timezone if job.timezone else "")
+            if job.timezone and not (job.run_calendar and job.start_times and job.start_mins):
+                jobname_to_schedule_map[job.name]["schedule"] = schedule or ""
+                jobname_to_schedule_map[job.name]["timezone"] = job.timezone
+        if len(jobname_to_schedule_map) > 1:
+            return jobname_to_schedule_map
+        else:
+            return {}
     @staticmethod    
     def build_box_hierarchy(jobs: Dict[str, AutosysJob]) -> Dict[str, Dict]:
         """Build hierarchy of box jobs and their contained jobs with nesting support"""

@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 from autosys_job import AutosysJob
 from collections import OrderedDict
-from utils.converter_utils import Utils
+import re
 
 class JILParser:
     """Parser for Autosys JIL files"""
@@ -83,7 +83,8 @@ class JILParser:
         if key == 'job_type':
             job.job_type = value
         elif key == 'command':
-            job.command = value
+            job.command = value.strip().strip('"').strip('\'')
+            job.command = re.sub(r"\$\{?AUTO_JOB_NAME\}?", job.name, job.command)
         elif key == 'machine':
             job.machine = self.autosys_machine_to_airflow_conn_id_map.get(value, value)
         elif key == 'owner':
@@ -101,11 +102,15 @@ class JILParser:
         elif key == 'description':
             job.description = value
         elif key == 'std_out_file':
-            job.std_out_file = value
+            job.std_out_file = value.strip('"').strip('\'').strip()
+            replacement = job.name if job.std_out_file.endswith(".log") else job.name + ".log"
+            job.std_out_file = re.sub(r"\$\{?AUTO_JOB_NAME\}?", replacement, job.std_out_file)
         elif key == 'std_err_file':
-            job.std_err_file = value
+            job.std_err_file = value.strip('"').strip('\'').strip()
+            replacement = job.name if job.std_err_file.endswith(".err") else job.name + ".err"
+            job.std_err_file = re.sub(r"\$\{?AUTO_JOB_NAME\}?", replacement, job.std_err_file)
         elif key == 'profile':
-            job.profile = value
+            job.profile = value.strip().strip('"').strip('\'')
         elif key == 'start_mins':
             job.start_mins = value
         elif key == 'priority':
@@ -115,7 +120,8 @@ class JILParser:
         elif key == 'min_run_alarm':
             job.min_run_alarm = int(value)
         elif key == 'watch_file':
-            job.watch_file = value.strip('"')
+            job.watch_file = value.strip().strip('"').strip('\'')
+            job.watch_file = re.sub(r"\$\{?AUTO_JOB_NAME\}?", job.name, job.watch_file)
         elif key == 'watch_interval':
             job.watch_interval = int(value)
         elif key == 'watch_file_min_size':
@@ -137,7 +143,7 @@ class JILParser:
         elif key == 'alarm_if_terminated':
             job.alarm_if_terminated = self.parse_value(value)
         elif key == 'timezone':
-            job.timezone = Utils.get_iana_timezone(value.strip().strip('"').strip('\''))
+            job.timezone = value.strip().strip('"').strip('\'')
         elif key == 'send_notification':
             job.send_notification = self.parse_value(value)
         elif key == 'notification_emailaddress':

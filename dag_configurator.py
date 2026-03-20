@@ -48,8 +48,8 @@ def show_single_dag_configurator():
     st.session_state.schedule = st.text_input("Schedule Interval", value=st.session_state.schedule)
 
     if st.button("🚀 Generate DAG"):
-        generator =  AirflowDAGGenerator(jobs_dict, {}, None, {}, {}, {},
-                                         st.session_state.downstream_jil_schedule, st.session_state.downstream_jil_tz, st.session_state.handle_ext_ref)
+        generator =  AirflowDAGGenerator(jobs_dict, {}, None, st.session_state.schedule, {}, {}, {},
+                                         st.session_state.downstream_jil_schedule, st.session_state.handle_ext_ref)
         dag_code = generator.generate_dag(st.session_state.dag_id, st.session_state.schedule)
         st.session_state.dag_code = dag_code
         st.session_state.dag_generated = True

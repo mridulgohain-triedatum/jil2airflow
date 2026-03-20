@@ -1,0 +1,318 @@
+{
+  "total": 4,
+  "p": 1,
+  "ps": 100,
+  "paging": {
+    "pageIndex": 1,
+    "pageSize": 100,
+    "total": 4
+  },
+  "effortTotal": 25,
+  "debtTotal": 25,
+  "issues": [
+    {
+      "key": "AZ0J1TQImOedRvCF0YBY",
+      "rule": "python:S1192",
+      "severity": "CRITICAL",
+      "component": "mridulgohain-triedatum_jil2airflow:jil_parser.py",
+      "project": "mridulgohain-triedatum_jil2airflow",
+      "line": 87,
+      "hash": "bc4c542dce79bffc76cfbcaefa605bef",
+      "textRange": {
+        "startLine": 87,
+        "endLine": 87,
+        "startOffset": 33,
+        "endOffset": 57
+      },
+      "flows": [
+        {
+          "locations": [
+            {
+              "component": "mridulgohain-triedatum_jil2airflow:jil_parser.py",
+              "textRange": {
+                "startLine": 107,
+                "endLine": 107,
+                "startOffset": 38,
+                "endOffset": 62
+              },
+              "msg": "Duplication"
+            }
+          ]
+        },
+        {
+          "locations": [
+            {
+              "component": "mridulgohain-triedatum_jil2airflow:jil_parser.py",
+              "textRange": {
+                "startLine": 111,
+                "endLine": 111,
+                "startOffset": 38,
+                "endOffset": 62
+              },
+              "msg": "Duplication"
+            }
+          ]
+        },
+        {
+          "locations": [
+            {
+              "component": "mridulgohain-triedatum_jil2airflow:jil_parser.py",
+              "textRange": {
+                "startLine": 124,
+                "endLine": 124,
+                "startOffset": 36,
+                "endOffset": 60
+              },
+              "msg": "Duplication"
+            }
+          ]
+        }
+      ],
+      "status": "OPEN",
+      "message": "Define a constant instead of duplicating this literal r\"\\$\\{?AUTO_JOB_NAME\\}?\" 4 times.",
+      "effort": "8min",
+      "debt": "8min",
+      "assignee": "mridulgohain-triedatum-jxfob@github",
+      "author": "mridul.gohain@triedatum.com",
+      "tags": [
+        "design"
+      ],
+      "creationDate": "2025-12-17T05:07:20+0000",
+      "updateDate": "2026-03-20T06:00:31+0000",
+      "type": "CODE_SMELL",
+      "organization": "mridulgohain-triedatum",
+      "pullRequest": "11",
+      "cleanCodeAttribute": "DISTINCT",
+      "cleanCodeAttributeCategory": "ADAPTABLE",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "HIGH"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "jil2airflow",
+      "internalTags": []
+    },
+    {
+      "key": "AZ0J1TTCmOedRvCF0YBa",
+      "rule": "python:S1192",
+      "severity": "CRITICAL",
+      "component": "mridulgohain-triedatum_jil2airflow:streamlit_app.py",
+      "project": "mridulgohain-triedatum_jil2airflow",
+      "line": 433,
+      "hash": "6a7cdeba1b9028c1209e87517931de70",
+      "textRange": {
+        "startLine": 433,
+        "endLine": 433,
+        "startOffset": 13,
+        "endOffset": 24
+      },
+      "flows": [
+        {
+          "locations": [
+            {
+              "component": "mridulgohain-triedatum_jil2airflow:streamlit_app.py",
+              "textRange": {
+                "startLine": 463,
+                "endLine": 463,
+                "startOffset": 13,
+                "endOffset": 24
+              },
+              "msg": "Duplication"
+            }
+          ]
+        },
+        {
+          "locations": [
+            {
+              "component": "mridulgohain-triedatum_jil2airflow:streamlit_app.py",
+              "textRange": {
+                "startLine": 606,
+                "endLine": 606,
+                "startOffset": 20,
+                "endOffset": 31
+              },
+              "msg": "Duplication"
+            }
+          ]
+        }
+      ],
+      "status": "OPEN",
+      "message": "Define a constant instead of duplicating this literal \"File Name\" 3 times.",
+      "effort": "6min",
+      "debt": "6min",
+      "assignee": "mridulgohain-triedatum-jxfob@github",
+      "author": "mridul.gohain@triedatum.com",
+      "tags": [
+        "design"
+      ],
+      "creationDate": "2025-11-18T05:53:00+0000",
+      "updateDate": "2026-03-20T06:00:31+0000",
+      "type": "CODE_SMELL",
+      "organization": "mridulgohain-triedatum",
+      "pullRequest": "11",
+      "cleanCodeAttribute": "DISTINCT",
+      "cleanCodeAttributeCategory": "ADAPTABLE",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "HIGH"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "jil2airflow",
+      "internalTags": []
+    },
+    {
+      "key": "AZ0J1TTCmOedRvCF0YBZ",
+      "rule": "python:S1192",
+      "severity": "CRITICAL",
+      "component": "mridulgohain-triedatum_jil2airflow:streamlit_app.py",
+      "project": "mridulgohain-triedatum_jil2airflow",
+      "line": 445,
+      "hash": "78805bc1e7e842658de9eb0b36469bca",
+      "textRange": {
+        "startLine": 445,
+        "endLine": 445,
+        "startOffset": 28,
+        "endOffset": 55
+      },
+      "flows": [
+        {
+          "locations": [
+            {
+              "component": "mridulgohain-triedatum_jil2airflow:streamlit_app.py",
+              "textRange": {
+                "startLine": 475,
+                "endLine": 475,
+                "startOffset": 28,
+                "endOffset": 55
+              },
+              "msg": "Duplication"
+            }
+          ]
+        },
+        {
+          "locations": [
+            {
+              "component": "mridulgohain-triedatum_jil2airflow:streamlit_app.py",
+              "textRange": {
+                "startLine": 621,
+                "endLine": 621,
+                "startOffset": 28,
+                "endOffset": 55
+              },
+              "msg": "Duplication"
+            }
+          ]
+        }
+      ],
+      "status": "OPEN",
+      "message": "Define a constant instead of duplicating this literal 'background-color: #eef6ff' 3 times.",
+      "effort": "6min",
+      "debt": "6min",
+      "assignee": "mridulgohain-triedatum-jxfob@github",
+      "author": "mridul.gohain@triedatum.com",
+      "tags": [
+        "design"
+      ],
+      "creationDate": "2025-11-18T05:53:00+0000",
+      "updateDate": "2026-03-20T06:00:31+0000",
+      "type": "CODE_SMELL",
+      "organization": "mridulgohain-triedatum",
+      "pullRequest": "11",
+      "cleanCodeAttribute": "DISTINCT",
+      "cleanCodeAttributeCategory": "ADAPTABLE",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "HIGH"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "jil2airflow",
+      "internalTags": []
+    },
+    {
+      "key": "AZ0J1TTCmOedRvCF0YBb",
+      "rule": "python:S7504",
+      "severity": "MINOR",
+      "component": "mridulgohain-triedatum_jil2airflow:streamlit_app.py",
+      "project": "mridulgohain-triedatum_jil2airflow",
+      "line": 628,
+      "hash": "2a8e31ec25e4d8b75274166fc4b81e53",
+      "textRange": {
+        "startLine": 628,
+        "endLine": 628,
+        "startOffset": 19,
+        "endOffset": 23
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Remove this unnecessary `list()` call on an already iterable object.",
+      "effort": "5min",
+      "debt": "5min",
+      "assignee": "mridulgohain-triedatum-jxfob@github",
+      "author": "mridul.gohain@triedatum.com",
+      "tags": [],
+      "creationDate": "2025-11-18T05:53:00+0000",
+      "updateDate": "2026-03-20T06:00:31+0000",
+      "type": "CODE_SMELL",
+      "organization": "mridulgohain-triedatum",
+      "pullRequest": "11",
+      "cleanCodeAttribute": "CONVENTIONAL",
+      "cleanCodeAttributeCategory": "CONSISTENT",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "LOW"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "projectName": "jil2airflow",
+      "internalTags": []
+    }
+  ],
+  "components": [
+    {
+      "organization": "mridulgohain-triedatum",
+      "key": "mridulgohain-triedatum_jil2airflow",
+      "uuid": "AZ0J1NaQ_vzxr3IpnrIk",
+      "enabled": true,
+      "qualifier": "TRK",
+      "name": "jil2airflow",
+      "longName": "jil2airflow",
+      "pullRequest": "11"
+    },
+    {
+      "organization": "mridulgohain-triedatum",
+      "key": "mridulgohain-triedatum_jil2airflow:jil_parser.py",
+      "uuid": "AZ0J1S57mOedRvCF0YBH",
+      "enabled": true,
+      "qualifier": "FIL",
+      "name": "jil_parser.py",
+      "longName": "jil_parser.py",
+      "path": "jil_parser.py",
+      "pullRequest": "11"
+    },
+    {
+      "organization": "mridulgohain-triedatum",
+      "key": "mridulgohain-triedatum_jil2airflow:streamlit_app.py",
+      "uuid": "AZ0J1S57mOedRvCF0YBX",
+      "enabled": true,
+      "qualifier": "FIL",
+      "name": "streamlit_app.py",
+      "longName": "streamlit_app.py",
+      "path": "streamlit_app.py",
+      "pullRequest": "11"
+    }
+  ],
+  "organizations": [
+    {
+      "key": "mridulgohain-triedatum",
+      "name": "mridulgohain-triedatum"
+    }
+  ],
+  "facets": []
+}
