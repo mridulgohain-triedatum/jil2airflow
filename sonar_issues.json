@@ -11,11 +11,11 @@
   "debtTotal": 25,
   "issues": [
     {
-      "key": "AZz6pWfgoxUOsGaRST9K",
+      "key": "AZ0J1TQImOedRvCF0YBY",
       "rule": "python:S1192",
       "severity": "CRITICAL",
-      "component": "mgohain_jil2airflow:jil_parser.py",
-      "project": "mgohain_jil2airflow",
+      "component": "mridulgohain-triedatum_jil2airflow:jil_parser.py",
+      "project": "mridulgohain-triedatum_jil2airflow",
       "line": 87,
       "hash": "bc4c542dce79bffc76cfbcaefa605bef",
       "textRange": {
@@ -28,7 +28,7 @@
         {
           "locations": [
             {
-              "component": "mgohain_jil2airflow:jil_parser.py",
+              "component": "mridulgohain-triedatum_jil2airflow:jil_parser.py",
               "textRange": {
                 "startLine": 107,
                 "endLine": 107,
@@ -42,7 +42,7 @@
         {
           "locations": [
             {
-              "component": "mgohain_jil2airflow:jil_parser.py",
+              "component": "mridulgohain-triedatum_jil2airflow:jil_parser.py",
               "textRange": {
                 "startLine": 111,
                 "endLine": 111,
@@ -56,7 +56,7 @@
         {
           "locations": [
             {
-              "component": "mgohain_jil2airflow:jil_parser.py",
+              "component": "mridulgohain-triedatum_jil2airflow:jil_parser.py",
               "textRange": {
                 "startLine": 124,
                 "endLine": 124,
@@ -72,15 +72,16 @@
       "message": "Define a constant instead of duplicating this literal r\"\\$\\{?AUTO_JOB_NAME\\}?\" 4 times.",
       "effort": "8min",
       "debt": "8min",
+      "assignee": "mridulgohain-triedatum-jxfob@github",
       "author": "mridul.gohain@triedatum.com",
       "tags": [
         "design"
       ],
       "creationDate": "2025-12-17T05:07:20+0000",
-      "updateDate": "2026-03-17T07:13:54+0000",
+      "updateDate": "2026-03-20T06:00:31+0000",
       "type": "CODE_SMELL",
-      "organization": "mgohain",
-      "pullRequest": "6",
+      "organization": "mridulgohain-triedatum",
+      "pullRequest": "11",
       "cleanCodeAttribute": "DISTINCT",
       "cleanCodeAttributeCategory": "ADAPTABLE",
       "impacts": [
@@ -94,11 +95,11 @@
       "internalTags": []
     },
     {
-      "key": "AZz6pWjtoxUOsGaRST9M",
+      "key": "AZ0J1TTCmOedRvCF0YBa",
       "rule": "python:S1192",
       "severity": "CRITICAL",
-      "component": "mgohain_jil2airflow:streamlit_app.py",
-      "project": "mgohain_jil2airflow",
+      "component": "mridulgohain-triedatum_jil2airflow:streamlit_app.py",
+      "project": "mridulgohain-triedatum_jil2airflow",
       "line": 433,
       "hash": "6a7cdeba1b9028c1209e87517931de70",
       "textRange": {
@@ -111,7 +112,7 @@
         {
           "locations": [
             {
-              "component": "mgohain_jil2airflow:streamlit_app.py",
+              "component": "mridulgohain-triedatum_jil2airflow:streamlit_app.py",
               "textRange": {
                 "startLine": 463,
                 "endLine": 463,
@@ -125,7 +126,7 @@
         {
           "locations": [
             {
-              "component": "mgohain_jil2airflow:streamlit_app.py",
+              "component": "mridulgohain-triedatum_jil2airflow:streamlit_app.py",
               "textRange": {
                 "startLine": 606,
                 "endLine": 606,
@@ -141,15 +142,16 @@
       "message": "Define a constant instead of duplicating this literal \"File Name\" 3 times.",
       "effort": "6min",
       "debt": "6min",
+      "assignee": "mridulgohain-triedatum-jxfob@github",
       "author": "mridul.gohain@triedatum.com",
       "tags": [
         "design"
       ],
       "creationDate": "2025-11-18T05:53:00+0000",
-      "updateDate": "2026-03-17T07:13:54+0000",
+      "updateDate": "2026-03-20T06:00:31+0000",
       "type": "CODE_SMELL",
-      "organization": "mgohain",
-      "pullRequest": "6",
+      "organization": "mridulgohain-triedatum",
+      "pullRequest": "11",
       "cleanCodeAttribute": "DISTINCT",
       "cleanCodeAttributeCategory": "ADAPTABLE",
       "impacts": [
@@ -163,11 +165,11 @@
       "internalTags": []
     },
     {
-      "key": "AZz6pWjtoxUOsGaRST9L",
+      "key": "AZ0J1TTCmOedRvCF0YBZ",
       "rule": "python:S1192",
       "severity": "CRITICAL",
-      "component": "mgohain_jil2airflow:streamlit_app.py",
-      "project": "mgohain_jil2airflow",
+      "component": "mridulgohain-triedatum_jil2airflow:streamlit_app.py",
+      "project": "mridulgohain-triedatum_jil2airflow",
       "line": 445,
       "hash": "78805bc1e7e842658de9eb0b36469bca",
       "textRange": {
@@ -180,7 +182,7 @@
         {
           "locations": [
             {
-              "component": "mgohain_jil2airflow:streamlit_app.py",
+              "component": "mridulgohain-triedatum_jil2airflow:streamlit_app.py",
               "textRange": {
                 "startLine": 475,
                 "endLine": 475,
@@ -194,7 +196,7 @@
         {
           "locations": [
             {
-              "component": "mgohain_jil2airflow:streamlit_app.py",
+              "component": "mridulgohain-triedatum_jil2airflow:streamlit_app.py",
               "textRange": {
                 "startLine": 621,
                 "endLine": 621,
@@ -210,15 +212,16 @@
       "message": "Define a constant instead of duplicating this literal 'background-color: #eef6ff' 3 times.",
       "effort": "6min",
       "debt": "6min",
+      "assignee": "mridulgohain-triedatum-jxfob@github",
       "author": "mridul.gohain@triedatum.com",
       "tags": [
         "design"
       ],
       "creationDate": "2025-11-18T05:53:00+0000",
-      "updateDate": "2026-03-17T07:13:54+0000",
+      "updateDate": "2026-03-20T06:00:31+0000",
       "type": "CODE_SMELL",
-      "organization": "mgohain",
-      "pullRequest": "6",
+      "organization": "mridulgohain-triedatum",
+      "pullRequest": "11",
       "cleanCodeAttribute": "DISTINCT",
       "cleanCodeAttributeCategory": "ADAPTABLE",
       "impacts": [
@@ -232,11 +235,11 @@
       "internalTags": []
     },
     {
-      "key": "AZz6pWjtoxUOsGaRST9N",
+      "key": "AZ0J1TTCmOedRvCF0YBb",
       "rule": "python:S7504",
       "severity": "MINOR",
-      "component": "mgohain_jil2airflow:streamlit_app.py",
-      "project": "mgohain_jil2airflow",
+      "component": "mridulgohain-triedatum_jil2airflow:streamlit_app.py",
+      "project": "mridulgohain-triedatum_jil2airflow",
       "line": 628,
       "hash": "2a8e31ec25e4d8b75274166fc4b81e53",
       "textRange": {
@@ -250,13 +253,14 @@
       "message": "Remove this unnecessary `list()` call on an already iterable object.",
       "effort": "5min",
       "debt": "5min",
+      "assignee": "mridulgohain-triedatum-jxfob@github",
       "author": "mridul.gohain@triedatum.com",
       "tags": [],
       "creationDate": "2025-11-18T05:53:00+0000",
-      "updateDate": "2026-03-17T07:13:54+0000",
+      "updateDate": "2026-03-20T06:00:31+0000",
       "type": "CODE_SMELL",
-      "organization": "mgohain",
-      "pullRequest": "6",
+      "organization": "mridulgohain-triedatum",
+      "pullRequest": "11",
       "cleanCodeAttribute": "CONVENTIONAL",
       "cleanCodeAttributeCategory": "CONSISTENT",
       "impacts": [
@@ -272,42 +276,42 @@
   ],
   "components": [
     {
-      "organization": "mgohain",
-      "key": "mgohain_jil2airflow",
-      "uuid": "AZz6pPZs8Wof43VDER7B",
+      "organization": "mridulgohain-triedatum",
+      "key": "mridulgohain-triedatum_jil2airflow",
+      "uuid": "AZ0J1NaQ_vzxr3IpnrIk",
       "enabled": true,
       "qualifier": "TRK",
       "name": "jil2airflow",
       "longName": "jil2airflow",
-      "pullRequest": "6"
+      "pullRequest": "11"
     },
     {
-      "organization": "mgohain",
-      "key": "mgohain_jil2airflow:jil_parser.py",
-      "uuid": "AZz6pWFDoxUOsGaRST85",
+      "organization": "mridulgohain-triedatum",
+      "key": "mridulgohain-triedatum_jil2airflow:jil_parser.py",
+      "uuid": "AZ0J1S57mOedRvCF0YBH",
       "enabled": true,
       "qualifier": "FIL",
       "name": "jil_parser.py",
       "longName": "jil_parser.py",
       "path": "jil_parser.py",
-      "pullRequest": "6"
+      "pullRequest": "11"
     },
     {
-      "organization": "mgohain",
-      "key": "mgohain_jil2airflow:streamlit_app.py",
-      "uuid": "AZz6pWFDoxUOsGaRST9J",
+      "organization": "mridulgohain-triedatum",
+      "key": "mridulgohain-triedatum_jil2airflow:streamlit_app.py",
+      "uuid": "AZ0J1S57mOedRvCF0YBX",
       "enabled": true,
       "qualifier": "FIL",
       "name": "streamlit_app.py",
       "longName": "streamlit_app.py",
       "path": "streamlit_app.py",
-      "pullRequest": "6"
+      "pullRequest": "11"
     }
   ],
   "organizations": [
     {
-      "key": "mgohain",
-      "name": "mgohain"
+      "key": "mridulgohain-triedatum",
+      "name": "mridulgohain-triedatum"
     }
   ],
   "facets": []
